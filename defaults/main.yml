@@ -1,0 +1,39 @@
+# Copyright 2023 Chris Croome
+#
+# This file is part of the Webarchitects hosts Ansible role.
+#
+# The Webarchitects hosts Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects hosts Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects hosts Ansible role. If not, see <https://www.gnu.org/licenses/>.
+---
+hosts: false
+hosts_file:
+  - ip: 127.0.0.1
+    hostname:
+      - localhost
+  - ip: "{{ ansible_default_ipv4.address }}"
+    hostname:
+      - "{{ inventory_hostname }}"
+      - "{{ inventory_hostname_short }}"
+  - ip: ::1
+    hostname:
+      - ip6-localhost
+      - ip6-loopback
+  - ip: fe00::0
+    hostname:
+      - ip6-localnet
+  - ip: ff00::0
+    hostname:
+      - ip6-mcastprefix
+  - ip: ff02::1
+    hostname:
+      - ip6-allnodes
+  - ip: ff02::2
+    hostname:
+      - ip6-allrouters
+  - ip: ff02::3
+    hostname:
+      - ip6-allhosts
+...
