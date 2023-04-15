@@ -1,36 +1,54 @@
 # Copyright 2023 Chris Croome
 #
-# This file is part of the Webarchitects hosts Ansible role.
+# This file is part of the Webarchitects /etc/hosts Ansible role.
 #
-# The Webarchitects hosts Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+# The Webarchitects /etc/hosts Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 #
-# The Webarchitects hosts Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+# The Webarchitects /etc/hosts Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along with the Webarchitects hosts Ansible role. If not, see <https://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with the Webarchitects /etc/hosts Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
 - name: Amend /etc/hosts
   block:
 
+    - name: Debug the proposed /etc/hosts line
+      ansible.builtin.debug:
+        var: etchosts_line
+        verbosity: "{% if ansible_check_mode | bool %}0{% else %}1{% endif %}"
+
+    - name: Debug the proposed /etc/hosts regex
+      ansible.builtin.debug:
+        var: etchosts_regex
+        verbosity: "{% if ansible_check_mode | bool %}0{% else %}1{% endif %}"
+
     - name: Line present
       ansible.builtin.lineinfile:
         path: /etc/hosts
-        line: "{{ hosts_line }}"
-        regex: "{{ hosts_regex }}"
+        line: "{{ etchosts_line }}"
+        regex: "{{ etchosts_regex }}"
         state: present
+        backup: true
+        mode: "0644"
+        owner: root
+        group: root
       when: >-
-        ( hosts_line.state is not defined ) or
-        ( hosts_line.state == "present" )
+        ( etchosts_line.state is not defined ) or
+        ( etchosts_line.state == "present" )
 
     - name: Line absent
       ansible.builtin.lineinfile:
         path: /etc/hosts
-        line: "{{ hosts_line }}"
-        regex: "{{ hosts_regex }}"
+        line: "{{ etchosts_line }}"
+        regex: "{{ etchosts_regex }}"
         state: absent
+        backup: true
+        mode: "0644"
+        owner: root
+        group: root
       when:
-        - hosts_line.state is defined
-        - hosts_line.state == "absent"
+        - etchosts_line.state is defined
+        - etchosts_line.state == "absent"
 
   tags:
-    - hosts
+    - etchosts
 ...

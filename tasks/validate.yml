@@ -8,33 +8,24 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects /etc/hosts Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-etchosts: false
-etchosts_file:
-  - ip: 127.0.0.1
-    hostname:
-      - localhost
-  - ip: "{{ ansible_default_ipv4.address }}"
-    hostname:
-      - "{{ inventory_hostname }}"
-      - "{{ inventory_hostname_short }}"
-  - ip: ::1
-    hostname:
-      - ip6-localhost
-      - ip6-loopback
-  - ip: fe00::0
-    hostname:
-      - ip6-localnet
-  - ip: ff00::0
-    hostname:
-      - ip6-mcastprefix
-  - ip: ff02::1
-    hostname:
-      - ip6-allnodes
-  - ip: ff02::2
-    hostname:
-      - ip6-allrouters
-  - ip: ff02::3
-    hostname:
-      - ip6-allhosts
-etchosts_validate: true
+- name: Validate etchosts_ variables
+  block:
+
+    - name: Debug the hostvars variable names that start with etchosts_
+      ansible.builtin.debug:
+        var: etchostsvarnames
+        verbosity: "{% if ansible_check_mode | bool %}3{% else %}4{% endif %}"
+
+    - name: Debug the hostvars variable names that start with etchosts_
+      ansible.builtin.debug:
+        var: etchostshostvars
+        verbosity: "{% if ansible_check_mode | bool %}3{% else %}4{% endif %}"
+
+    - name: Check etchosts_ variables using meta/argument_specs.yml
+      ansible.builtin.validate_argument_spec:
+        argument_spec: "{{ (lookup('ansible.builtin.file', 'meta/argument_specs.yml') | from_yaml)['argument_specs']['main']['options'] }}"
+        provided_arguments: "{{ etchostshostvars }}"
+
+  tags:
+    - etchosts
 ...

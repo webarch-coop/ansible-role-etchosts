@@ -1,12 +1,12 @@
 # Copyright 2023 Chris Croome
 #
-# This file is part of the Webarchitects hosts Ansible role.
+# This file is part of the Webarchitects /etc/hosts Ansible role.
 #
-# The Webarchitects hosts Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+# The Webarchitects /etc/hosts Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 #
-# The Webarchitects hosts Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+# The Webarchitects /etc/hosts Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along with the Webarchitects hosts Ansible role. If not, see <https://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with the Webarchitects /etc/hosts Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
 argument_specs:
   main:
@@ -14,19 +14,18 @@ argument_specs:
     description: An Ansible role for configuring /etc/hosts.
     short_description: The main entry point for the Ansible role.
     options:
-      hosts:
+      etchosts:
         type: bool
         required: true
         description: Run the tasks in this role.
-      hosts_file:
-        type: list
-        elements: dict
+      etchosts_entry:
+        type: dict
         required: false
-        description: Entries for the /etc/hosts file.
+        description: An internal variable for the IP address and hostname(s) to be present in one line in /etc/hosts.
         options:
           hostname:
             type: str
-            required: true
+            required: false
             description: The hostnames for the IP address.
           ip:
             type: list
@@ -39,4 +38,37 @@ argument_specs:
             choices:
               - absent
               - present
+      etchosts_file:
+        type: list
+        elements: dict
+        required: false
+        description: Entries for the /etc/hosts file.
+        options:
+          hostname:
+            type: str
+            required: false
+            description: The hostnames for the IP address.
+          ip:
+            type: list
+            required: true
+            description: The IP address for the hostnames.
+          state:
+            type: str
+            required: false
+            description: The state of the IP address and hostnames line.
+            choices:
+              - absent
+              - present
+      etchosts_line:
+        type: str
+        required: true
+        description: An internal variable containing the contents of a /etc/hosts line.
+      etchosts_regex:
+        type: str
+        required: true
+        description: An internal variable containing a regular expression to match a /etc/hosts line.
+      etchosts_validate:
+        type: bool
+        required: false
+        description: Validate the etchosts_ variables.
 ...

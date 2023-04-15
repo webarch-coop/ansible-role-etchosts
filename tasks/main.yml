@@ -1,38 +1,45 @@
 # Copyright 2023 Chris Croome
 #
-# This file is part of the Webarchitects hosts Ansible role.
+# This file is part of the Webarchitects /etc/hosts Ansible role.
 #
-# The Webarchitects hosts Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+# The Webarchitects /etc/hosts Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 #
-# The Webarchitects hosts Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+# The Webarchitects /etc/hosts Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along with the Webarchitects hosts Ansible role. If not, see <https://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with the Webarchitects /etc/hosts Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
 - name: Manage /etc/hosts
   block:
 
+    - name: Include tasks to validate etchosts_ variables
+      ansible.builtin.include_tasks: validate.yml
+      when:
+        - etchosts_validate is defined
+        - etchosts_validate | bool
+
     - name: Slurp a base64 encoded version of the /etc/hosts file
       ansible.builtin.slurp:
         src: /etc/hosts
-      register: hosts_file_b64encoded
+      register: etchosts_existing_b64encoded
 
     - name: Decode the base64 encoded version of the /etc/hosts file and set a variable
       ansible.builtin.set_fact:
-        hosts_existing: "{{ hosts_file_b64encoded['content'] | b64decode | community.general.jc('hosts') }}"
+        etchosts_existing: "{{ etchosts_existing_b64encoded['content'] | b64decode | community.general.jc('hosts') }}"
 
     - name: Debug the exists /etc/hosts file entries
       ansible.builtin.debug:
-        var: hosts_existing
+        var: etchosts_existing
+        verbosity: "{% if ansible_check_mode | bool %}0{% else %}1{% endif %}"
 
     - name: Loop though the proposed /etc/hosts file lines
       ansible.builtin.include_tasks: ip.yml
-      loop: "{{ hosts_file }}"
+      loop: "{{ etchosts_file }}"
       loop_control:
-        loop_var: hosts_entry
-        label: "{{ hosts_line.ip }}"
-      when: hosts_entry not in hosts_existing
+        loop_var: etchosts_entry
+        label: "{{ etchosts_entry.ip }}"
+      when: etchosts_entry not in etchosts_existing
 
-  when: hosts | bool
+  when: etchosts | bool
   tags:
-    - hosts
+    - etchosts
 ...
