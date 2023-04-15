@@ -4,10 +4,21 @@
 
 An Ansible role to configure the contents of `/etc/hosts`.
 
+## Usage
+
 The existing content of `/etc/hosts` can be read as YAML using [JC](https://kellyjonbrazil.github.io/jc/):
 
 ```bash
 cat /etc/hosts | jc --hosts -yp
+```
+```yaml
+  - ip: 127.0.0.1
+    hostname:
+      - localhost
+  - ip: ::1
+    hostname:
+      - ip6-localhost
+      - ip6-loopback
 ```
 
 ## Role variables
