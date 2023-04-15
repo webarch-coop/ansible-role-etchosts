@@ -32,8 +32,10 @@
         owner: root
         group: root
       when: >-
-        ( etchosts_line.state is not defined ) or
-        ( etchosts_line.state == "present" )
+        ( ( etchosts_line.state is not defined ) or
+        ( etchosts_line.state == "present" ) ) and
+        ( ( etchosts_line.hostname is defined ) and
+        ( etchosts_line.hostname != [] ) )
 
     - name: Line absent
       ansible.builtin.lineinfile:

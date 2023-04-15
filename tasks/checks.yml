@@ -8,41 +8,24 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects /etc/hosts Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-- name: Manage /etc/hosts
+- name: Check variables
   block:
 
-    - name: Include tasks to validate etchosts_ variables
-      ansible.builtin.include_tasks: validate.yml
-      when:
-        - etchosts_validate is defined
-        - etchosts_validate | bool
-
-    - name: Include tasks to check variables
-      ansible.builtin.include_tasks: checks.yml
-
-    - name: Slurp a base64 encoded version of the /etc/hosts file
-      ansible.builtin.slurp:
-        src: /etc/hosts
-      register: etchosts_existing_b64encoded
-
-    - name: Decode the base64 encoded version of the /etc/hosts file and set a variable
-      ansible.builtin.set_fact:
-        etchosts_existing: "{{ etchosts_existing_b64encoded['content'] | b64decode | community.general.jc('hosts') }}"
-
-    - name: Debug the exists /etc/hosts file entries
-      ansible.builtin.debug:
-        var: etchosts_existing
-        verbosity: "{% if ansible_check_mode | bool %}0{% else %}1{% endif %}"
-
     - name: Loop though the proposed /etc/hosts file lines
-      ansible.builtin.include_tasks: ip.yml
+      ansible.builtin.assert:
+        that:
+          - etchosts_entry.hostname is defined
+          - etchosts_entry.hostname != []
       loop: "{{ etchosts_file }}"
       loop_control:
         loop_var: etchosts_entry
         label: "{{ etchosts_entry.ip }}"
-      when: etchosts_entry not in etchosts_existing
+      when: >-
+        ( ( etchosts_line.state is not defined ) or
+        ( etchosts_line.state == "present" ) )
 
-  when: etchosts | bool
+    # TODO Add checks that domain names resolve to the server etc
+
   tags:
     - etchosts
 ...

@@ -36,14 +36,15 @@ A list of entries for the `/etc/hosts` file in the same format as returned by th
 ```yaml
 etchosts_file:
   - ip: 192.168.0.1
-    hostname:
-      - foo.example.lan
     state: absent
   - ip: 192.168.0.2
     hostname:
-      - bar.example.lan
-    state: present
+      - foo.example.lan
+      - foo
 ```
+oThe `ip` address is always required.
+
+The `hostname` is only required when the `state` is not defined or set to `present`.
 
 ### etchosts_validate
 
