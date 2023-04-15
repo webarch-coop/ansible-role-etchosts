@@ -42,9 +42,7 @@ etchosts_file:
       - foo.example.lan
       - foo
 ```
-oThe `ip` address is always required.
-
-The `hostname` is only required when the `state` is not defined or set to `present`.
+The `ip` address is required, the `hostname` is only required when the `state` is not defined or set to `present`.
 
 ### etchosts_validate
 
@@ -58,6 +56,6 @@ If you use this role please use a tagged release, see [the release notes](https:
 
 ## Copyright
 
-Copyright 2019-2023 Chris Croome, &lt;[chris@webarchitects.co.uk](mailto:chris@webarchitects.co.uk)&gt;.
+Copyright 2023 Chris Croome, &lt;[chris@webarchitects.co.uk](mailto:chris@webarchitects.co.uk)&gt;.
 
 This role is released under [the same terms as Ansible itself](https://github.com/ansible/ansible/blob/devel/COPYING), the [GNU GPLv3](LICENSE).
