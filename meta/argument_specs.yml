@@ -59,14 +59,6 @@ argument_specs:
             choices:
               - absent
               - present
-      etchosts_line:
-        type: str
-        required: true
-        description: An internal variable containing the contents of a /etc/hosts line.
-      etchosts_regex:
-        type: str
-        required: true
-        description: An internal variable containing a regular expression to match a /etc/hosts line.
       etchosts_validate:
         type: bool
         required: false

@@ -11,16 +11,6 @@
 - name: Amend /etc/hosts
   block:
 
-    - name: Debug the proposed /etc/hosts line
-      ansible.builtin.debug:
-        var: etchosts_line
-        verbosity: "{% if ansible_check_mode | bool %}0{% else %}1{% endif %}"
-
-    - name: Debug the proposed /etc/hosts regex
-      ansible.builtin.debug:
-        var: etchosts_regex
-        verbosity: "{% if ansible_check_mode | bool %}0{% else %}1{% endif %}"
-
     - name: Line present
       ansible.builtin.lineinfile:
         path: /etc/hosts
@@ -31,6 +21,9 @@
         mode: "0644"
         owner: root
         group: root
+      vars:
+        etchosts_line: "{{ etchosts_entry.ip }}{% for etchosts_name in etchosts_entry.hostname %} {{ etchosts_name }}{% endfor %}"
+        etchosts_regex: "^{{ etchosts_entry.ip | ansible.builtin.regex_escape() }}\\s+"
       when: >-
         ( ( etchosts_line.state is not defined ) or
         ( etchosts_line.state == "present" ) ) and
@@ -47,6 +40,9 @@
         mode: "0644"
         owner: root
         group: root
+      vars:
+        etchosts_line: "{{ etchosts_entry.ip }}{% for etchosts_name in etchosts_entry.hostname %} {{ etchosts_name }}{% endfor %}"
+        etchosts_regex: "^{{ etchosts_entry.ip | ansible.builtin.regex_escape() }}\\s+"
       when:
         - etchosts_line.state is defined
         - etchosts_line.state == "absent"

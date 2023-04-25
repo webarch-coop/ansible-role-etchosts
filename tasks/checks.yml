@@ -14,15 +14,15 @@
     - name: Loop though the proposed /etc/hosts file lines
       ansible.builtin.assert:
         that:
-          - etchosts_entry.hostname is defined
-          - etchosts_entry.hostname != []
+          - etchosts_entry_check.hostname is defined
+          - etchosts_entry_check.hostname != []
       loop: "{{ etchosts_file }}"
       loop_control:
-        loop_var: etchosts_entry
-        label: "{{ etchosts_entry.ip }}"
+        loop_var: etchosts_entry_check
+        label: "{{ etchosts_entry_check.ip }}"
       when: >-
-        ( ( etchosts_line.state is not defined ) or
-        ( etchosts_line.state == "present" ) )
+        ( ( etchosts_entry_check.state is not defined ) or
+        ( etchosts_entry_check.state == "present" ) )
 
     # TODO Add checks that domain names resolve to the server etc
 

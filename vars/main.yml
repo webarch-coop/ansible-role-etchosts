@@ -11,11 +11,4 @@
 # https://docs.ansible.com/ansible/latest/playbook_guide/complex_data_manipulation.html
 etchostsvarnames: "{{ q('varnames', '^etchosts_') | sort }}"
 etchostshostvars: "{{ dict(etchostsvarnames | list | zip(q('vars', *etchostsvarnames))) }}"
-
-# etchosts_entry is an internal loop variable, empty vaiable here for role validation
-etchosts_entry:
-  ip: ""
-  hostname: []
-etchosts_line: "{{ etchosts_entry.ip }}{% for etchosts_name in etchosts_entry.hostname %} {{ etchosts_name }}{% endfor %}"
-etchosts_regex: "^{{ etchosts_entry.ip | ansible.builtin.regex_escape() }}\\s+"
 ...
