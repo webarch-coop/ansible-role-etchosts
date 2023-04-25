@@ -16,6 +16,7 @@
         that:
           - etchosts_entry_check.hostname is defined
           - etchosts_entry_check.hostname != []
+        quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
       loop: "{{ etchosts_file }}"
       loop_control:
         loop_var: etchosts_entry_check
@@ -23,6 +24,25 @@
       when: >-
         ( ( etchosts_entry_check.state is not defined ) or
         ( etchosts_entry_check.state == "present" ) )
+
+    - name: Slurp a base64 encoded version of the /etc/hosts file
+      ansible.builtin.slurp:
+        src: /etc/hosts
+      register: etchosts_existing_b64encoded
+
+    - name: Decode the base64 encoded version of the /etc/hosts file and set a variable
+      ansible.builtin.set_fact:
+        etchosts_existing: "{{ etchosts_existing_b64encoded['content'] | b64decode | community.general.jc('hosts') }}"
+
+    - name: Debug the exists /etc/hosts file entries
+      ansible.builtin.debug:
+        var: etchosts_existing
+        verbosity: "{% if ansible_check_mode | bool %}1{% else %}2{% endif %}"
+
+    - name: Diff the existing and proposed /etc/hosts file variables
+      ansible.utils.fact_diff:
+        before: "{{ etchosts_existing }}"
+        after: "{{ etchosts_file }}"
 
     # TODO Add checks that domain names resolve to the server etc
 

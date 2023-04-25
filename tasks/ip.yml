@@ -11,41 +11,65 @@
 - name: Amend /etc/hosts
   block:
 
-    - name: Line present
-      ansible.builtin.lineinfile:
-        path: /etc/hosts
-        line: "{{ etchosts_line }}"
-        regex: "{{ etchosts_regex }}"
-        state: present
-        backup: true
-        mode: "0644"
-        owner: root
-        group: root
+    - name: Set a facts for the existing line and regex to match the line in /etc/hosts
+      ansible.builtin.set_fact:
+        etchosts_line_existing: "{{ etchosts_entry.ip }}{% for etchosts_name in ( etchosts_existing | community.general.json_query(etchosts_line_existing_jpq) ) %} {{ etchosts_name }}{% endfor %}"
+        etchosts_line_regex: "^{{ etchosts_entry.ip | ansible.builtin.regex_escape() }}\\s+"
       vars:
-        etchosts_line: "{{ etchosts_entry.ip }}{% for etchosts_name in etchosts_entry.hostname %} {{ etchosts_name }}{% endfor %}"
-        etchosts_regex: "^{{ etchosts_entry.ip | ansible.builtin.regex_escape() }}\\s+"
+        etchosts_line_existing_jpq: "[?ip=='{{ etchosts_entry.ip }}'].hostname|[0]"
+
+    - name: Line present
+      block:
+
+        - name: Set a facts for the proposed line in /etc/hosts
+          ansible.builtin.set_fact:
+            etchosts_line_proposed: "{{ etchosts_entry.ip }}{% for etchosts_name in etchosts_entry.hostname %} {{ etchosts_name }}{% endfor %}"
+
+        - name: Debug the existing and proposed line in /etc/hosts
+          ansible.builtin.debug:
+            msg:
+              - "Existing line: {{ etchosts_line_existing }}"
+              - "Proposed line: {{ etchosts_line_proposed }}"
+
+        - name: Line present
+          ansible.builtin.lineinfile:
+            path: /etc/hosts
+            line: "{{ etchosts_line_proposed }}"
+            regex: "{{ etchosts_line_regex }}"
+            state: present
+            backup: true
+            mode: "0644"
+            owner: root
+            group: root
+
       when: >-
-        ( ( etchosts_line.state is not defined ) or
-        ( etchosts_line.state == "present" ) ) and
-        ( ( etchosts_line.hostname is defined ) and
-        ( etchosts_line.hostname != [] ) )
+        ( ( etchosts_entry.state is not defined ) or
+        ( etchosts_entry.state == "present" ) ) and
+        ( ( etchosts_entry.hostname is defined ) and
+        ( etchosts_entry.hostname != [] ) )
 
     - name: Line absent
-      ansible.builtin.lineinfile:
-        path: /etc/hosts
-        line: "{{ etchosts_line }}"
-        regex: "{{ etchosts_regex }}"
-        state: absent
-        backup: true
-        mode: "0644"
-        owner: root
-        group: root
-      vars:
-        etchosts_line: "{{ etchosts_entry.ip }}{% for etchosts_name in etchosts_entry.hostname %} {{ etchosts_name }}{% endfor %}"
-        etchosts_regex: "^{{ etchosts_entry.ip | ansible.builtin.regex_escape() }}\\s+"
+      block:
+
+        - name: Debug the existing and proposed line in /etc/hosts
+          ansible.builtin.debug:
+            msg:
+              - "Existing line: {{ etchosts_line_existing }}"
+              - "Proposed line:"
+
+        - name: Line absent
+          ansible.builtin.lineinfile:
+            path: /etc/hosts
+            regex: "{{ etchosts_line_regex }}"
+            state: absent
+            backup: true
+            mode: "0644"
+            owner: root
+            group: root
+
       when:
-        - etchosts_line.state is defined
-        - etchosts_line.state == "absent"
+        - etchosts_entry.state is defined
+        - etchosts_entry.state == "absent"
 
   tags:
     - etchosts
