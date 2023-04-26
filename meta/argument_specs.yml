@@ -59,8 +59,12 @@ argument_specs:
             choices:
               - absent
               - present
+      etchosts_template:
+        type: bool
+        required: true
+        description: Template the /etc/hosts file rather than editing it.
       etchosts_validate:
         type: bool
-        required: false
+        required: true
         description: Validate the etchosts_ variables.
 ...

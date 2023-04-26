@@ -33,18 +33,21 @@
     - name: Decode the base64 encoded version of the /etc/hosts file and set a variable
       ansible.builtin.set_fact:
         etchosts_existing: "{{ etchosts_existing_b64encoded['content'] | b64decode | community.general.jc('hosts') }}"
+        etchosts_existing_ips: "{{ etchosts_existing_b64encoded['content'] | b64decode | community.general.jc('hosts') | community.general.json_query('[*].ip') }}"
 
     - name: Debug the exists /etc/hosts file entries
       ansible.builtin.debug:
         var: etchosts_existing
-        verbosity: "{% if ansible_check_mode | bool %}1{% else %}2{% endif %}"
+        verbosity: "{% if ansible_check_mode | bool %}2{% else %}3{% endif %}"
 
     - name: Diff the existing and proposed /etc/hosts file variables
       ansible.utils.fact_diff:
         before: "{{ etchosts_existing }}"
         after: "{{ etchosts_file }}"
 
-    # TODO Add checks that domain names resolve to the server etc
+    # TODO Add checks:
+    # - Proposed IP addresses are not duplicated
+    # - Domain names resolve to the server
 
   tags:
     - etchosts

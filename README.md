@@ -4,6 +4,8 @@
 
 An Ansible role to configure the contents of `/etc/hosts`.
 
+By default this role edits, rather than templating the `/etc/hosts` file, this has the advantage that it won't remove comments or existing lines (when not asked to), however in this mode it can't re-order lines, set `etchosts_template` to `true` for the `/etc/hosts` file to be templated.
+
 ## Usage
 
 The existing content of `/etc/hosts` can be read as YAML using [JC](https://kellyjonbrazil.github.io/jc/):
@@ -43,6 +45,10 @@ etchosts_file:
       - foo
 ```
 The `ip` address is required, the `hostname` is only required when the `state` is not defined or set to `present`.
+
+### etchosts_template
+
+A boolean that defaults to `false`, the `/etc/hosts` file is edired using [ansible.buiiltin.lineinfile](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/lineinfile_module.html), set `etchosts_template` to `true` for [ansible.builtin.template](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/template_module.html) to be used.
 
 ### etchosts_validate
 

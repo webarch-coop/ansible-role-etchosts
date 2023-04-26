@@ -20,20 +20,35 @@
     - name: Include tasks to check variables
       ansible.builtin.include_tasks: checks.yml
 
-    - name: Loop though the proposed /etc/hosts file lines
-      ansible.builtin.include_tasks: ip.yml
+    - name: Edit /etc/hosts
+      ansible.builtin.include_tasks: edit.yml
       loop: "{{ etchosts_file }}"
       loop_control:
+        extended: true
         loop_var: etchosts_entry
         label: "{{ etchosts_entry.ip }}"
       when: >-
+        ( ( etchosts_template is defined ) and
+        ( not etchosts_template | bool ) ) and
         ( ( etchosts_entry not in etchosts_existing ) and
         ( ( etchosts_entry.state is not defined ) or
         ( etchosts_entry.state == "present" ) ) and
         ( ( etchosts_entry.hostname is defined ) and
         ( etchosts_entry.hostname != [] ) ) ) or
         ( ( etchosts_entry.state is defined ) and
-        ( etchosts_entry.state == "absent" ) )
+        ( etchosts_entry.state == "absent" ) and
+        ( etchosts_entry.ip in etchosts_existing_ips ) )
+
+    - name: Template /etc/hosts
+      ansible.builtin.template:
+        src: hosts.j2
+        dest: /etc/hosts
+        mode: "0644"
+        owner: root
+        group: root
+      when:
+        - etchosts_template is defined
+        - etchosts_template | bool
 
   when: etchosts | bool
   tags:

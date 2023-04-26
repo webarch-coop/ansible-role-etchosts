@@ -36,5 +36,6 @@ etchosts_file:
   - ip: ff02::3
     hostname:
       - ip6-allhosts
+etchosts_template: false
 etchosts_validate: true
 ...

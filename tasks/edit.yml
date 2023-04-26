@@ -11,17 +11,30 @@
 - name: Amend /etc/hosts
   block:
 
-    - name: Set a facts for the existing line and regex to match the line in /etc/hosts
+    - name: Set fact for the existing line
+      block:
+
+        - name: Set a fact for the existing line hostnames in /etc/hosts
+          ansible.builtin.set_fact:
+            etchosts_line_existing_hostnames: "{{ etchosts_existing | community.general.json_query(etchosts_line_existing_jpq) }}"
+          vars:
+            etchosts_line_existing_jpq: "[?ip=='{{ etchosts_entry.ip }}'].hostname|[0]"
+
+        - name: Set a fact for the existing line in /etc/hosts when it is present
+          ansible.builtin.set_fact:
+            etchosts_line_existing: "{{ etchosts_entry.ip }}{% for etchosts_name in etchosts_line_existing_hostnames %} {{ etchosts_name }}{% endfor %}"
+
+      when: etchosts_entry.ip in etchosts_existing_ips
+
+    - name: Set a fact for the existing line in /etc/hosts when it is not present
       ansible.builtin.set_fact:
-        etchosts_line_existing: "{{ etchosts_entry.ip }}{% for etchosts_name in ( etchosts_existing | community.general.json_query(etchosts_line_existing_jpq) ) %} {{ etchosts_name }}{% endfor %}"
-        etchosts_line_regex: "^{{ etchosts_entry.ip | ansible.builtin.regex_escape() }}\\s+"
-      vars:
-        etchosts_line_existing_jpq: "[?ip=='{{ etchosts_entry.ip }}'].hostname|[0]"
+        etchosts_line_existing: ""
+      when: etchosts_entry.ip not in etchosts_existing_ips
 
     - name: Line present
       block:
 
-        - name: Set a facts for the proposed line in /etc/hosts
+        - name: Set a fact for the proposed line in /etc/hosts
           ansible.builtin.set_fact:
             etchosts_line_proposed: "{{ etchosts_entry.ip }}{% for etchosts_name in etchosts_entry.hostname %} {{ etchosts_name }}{% endfor %}"
 
@@ -31,16 +44,40 @@
               - "Existing line: {{ etchosts_line_existing }}"
               - "Proposed line: {{ etchosts_line_proposed }}"
 
-        - name: Line present
+        - name: Line present when it is the first line
           ansible.builtin.lineinfile:
             path: /etc/hosts
             line: "{{ etchosts_line_proposed }}"
             regex: "{{ etchosts_line_regex }}"
+            insertbefore: BOF
             state: present
             backup: true
             mode: "0644"
             owner: root
             group: root
+          vars:
+            etchosts_line_regex: "^{{ etchosts_entry.ip | ansible.builtin.regex_escape() }}\\s+"
+          when: >-
+            ( ( ansible_loop.length == 1 ) or
+            ( ansible_loop.previtem is not defined ) )
+
+        - name: Line present when it is not the first line
+          ansible.builtin.lineinfile:
+            path: /etc/hosts
+            line: "{{ etchosts_line_proposed }}"
+            regex: "{{ etchosts_line_regex }}"
+            insertafter: "{{ etchosts_line_prev_regex }}"
+            state: present
+            backup: true
+            mode: "0644"
+            owner: root
+            group: root
+          vars:
+            etchosts_line_regex: "^{{ etchosts_entry.ip | ansible.builtin.regex_escape() }}\\s+"
+            etchosts_line_prev_regex: "^{{ ansible_loop.previtem.ip | ansible.builtin.regex_escape() }}\\s+"
+          when:
+            - ansible_loop.length > 1
+            - ansible_loop.previtem is defined
 
       when: >-
         ( ( etchosts_entry.state is not defined ) or
@@ -66,6 +103,8 @@
             mode: "0644"
             owner: root
             group: root
+          vars:
+            etchosts_line_regex: "^{{ etchosts_entry.ip | ansible.builtin.regex_escape() }}\\s+"
 
       when:
         - etchosts_entry.state is defined
