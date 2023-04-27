@@ -11,7 +11,7 @@ By default this role edits, rather than templating the `/etc/hosts` file, this h
 The existing content of `/etc/hosts` can be read as YAML using [JC](https://kellyjonbrazil.github.io/jc/):
 
 ```bash
-cat /etc/hosts | jc --hosts -yp
+cat /etc/hosts | jc --hosts -y
 ```
 ```yaml
   - ip: 127.0.0.1
@@ -22,6 +22,8 @@ cat /etc/hosts | jc --hosts -yp
       - ip6-localhost
       - ip6-loopback
 ```
+
+The result returned when `jc --hosts -y` is used to parse the `/etc/hosts` file can be directly used for the `etchosts_file` array, with the optional addition of a `state` variable that can be added to each item and set to `present` (the default) or `absent`.
 
 ## Role variables
 
@@ -48,11 +50,11 @@ The `ip` address is required, the `hostname` is only required when the `state` i
 
 ### etchosts_template
 
-A boolean that defaults to `false`, the `/etc/hosts` file is edired using [ansible.buiiltin.lineinfile](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/lineinfile_module.html), set `etchosts_template` to `true` for [ansible.builtin.template](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/template_module.html) to be used.
+A boolean that defaults to `false` which results in the `/etc/hosts` file being edited using [ansible.buiiltin.lineinfile](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/lineinfile_module.html), set `etchosts_template` to `true` for [ansible.builtin.template](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/template_module.html) to be used.
 
 ### etchosts_validate
 
-A boolean that defaults to `true`, use the [meta/argument_specs.yml](meta/argument_specs.yml) file to check all variables that start with `etchosts_`.
+A boolean that defaults to `true`, which results in the [meta/argument_specs.yml](meta/argument_specs.yml) file being used to check all variables that start with `etchosts_`.
 
 ## Repository
 
