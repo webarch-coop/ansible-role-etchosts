@@ -48,6 +48,18 @@ etchosts_file:
 ```
 The `ip` address is required, the `hostname` is only required when the `state` is not defined or set to `present`.
 
+### etchosts_hostname
+
+The domain name for `/etc/hostname`, if blank the hostname will not be set.
+
+### etchosts_hostname_strategy
+
+The strategy for [ansible.builtin.hostname](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/hostname_module.html) to use.
+
+### etchosts_mailname
+
+The domain name for `/etc/mailname`, if blank the mailname will not be set.
+
 ### etchosts_template
 
 A boolean that defaults to `false` which results in the `/etc/hosts` file being edited using [ansible.buiiltin.lineinfile](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/lineinfile_module.html), set `etchosts_template` to `true` for [ansible.builtin.template](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/template_module.html) to be used.

@@ -59,6 +59,32 @@ argument_specs:
             choices:
               - absent
               - present
+      etchosts_hostname:
+        type: str
+        required: true
+        description: The domain name for /etc/hostname.
+      etchosts_hostname_strategy:
+        type: str
+        required: true
+        description: The strategy that the ansible.builtin.hostname module should use.
+        choices:
+          - alpine
+          - darwin
+          - debian
+          - freebsd
+          - generic
+          - macos
+          - macosx
+          - openbsd
+          - openrc
+          - redhat
+          - sles
+          - solaris
+          - systemd
+      etchosts_mailname:
+        type: str
+        required: true
+        description: The domain name for /etc/mailname.
       etchosts_template:
         type: bool
         required: true

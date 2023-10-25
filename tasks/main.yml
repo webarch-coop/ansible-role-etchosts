@@ -50,6 +50,22 @@
         - etchosts_template is defined
         - etchosts_template | bool
 
+    - name: Hostname set
+      ansible.builtin.hostname:
+        name: "{{ etchosts_hostname }}"
+        use: "{{ etchosts_hostname_strategy }}"
+      when: etchosts_hostname | length > 0
+
+    - name: Mailname set
+      ansible.builtin.lineinfile:
+        create: true
+        line: "{{ etchosts_mailname }}"
+        mode: "0644"
+        path: /etc/mailname
+        regex: '^[0-9a-z-]{1,60}[.].*'
+        state: present
+      when: etchosts_mailname | length > 0
+
   when: etchosts | bool
   tags:
     - etchosts
