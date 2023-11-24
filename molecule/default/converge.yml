@@ -72,4 +72,5 @@
           - ip: ff02::3
             hostname:
               - ip6-allhosts
+        etchosts_unsafe_writes: true
 ...

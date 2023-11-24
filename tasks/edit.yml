@@ -55,6 +55,7 @@
             mode: "0644"
             owner: root
             group: root
+            unsafe_writes: "{{ etchosts_unsafe_writes }}"
           vars:
             etchosts_line_regex: "^{{ etchosts_entry.ip | ansible.builtin.regex_escape() }}\\s+"
           when: >-
@@ -72,6 +73,7 @@
             mode: "0644"
             owner: root
             group: root
+            unsafe_writes: "{{ etchosts_unsafe_writes }}"
           vars:
             etchosts_line_regex: "^{{ etchosts_entry.ip | ansible.builtin.regex_escape() }}\\s+"
             etchosts_line_prev_regex: "^{{ ansible_loop.previtem.ip | ansible.builtin.regex_escape() }}\\s+"
@@ -103,6 +105,7 @@
             mode: "0644"
             owner: root
             group: root
+            unsafe_writes: "{{ etchosts_unsafe_writes }}"
           vars:
             etchosts_line_regex: "^{{ etchosts_entry.ip | ansible.builtin.regex_escape() }}\\s+"
 

@@ -89,6 +89,10 @@ argument_specs:
         type: bool
         required: true
         description: Template the /etc/hosts file rather than editing it.
+      etchosts_unsafe_writes:
+        type: bool
+        required: true
+        description: Use atomic operation to prevent data corruption or inconsistent reads from the target filesystem object with the ansible.builtin.lineinfile module.
       etchosts_validate:
         type: bool
         required: true
