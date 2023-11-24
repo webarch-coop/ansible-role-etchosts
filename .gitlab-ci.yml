@@ -27,6 +27,8 @@ before_script:
   - molecule --version
   - apt install -yqqq iproute2
   - ip addr
+  - hostname
+  - hostname -f
 stages:
   - bookworm
   # - bullseye
