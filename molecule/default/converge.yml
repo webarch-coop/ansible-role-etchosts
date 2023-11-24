@@ -31,6 +31,16 @@
     - name: Gather facts
       ansible.builtin.setup:
 
+    - name: Run hostname -f
+      ansible.builtin.command: hostname -f
+      check_mode: false
+      changed_when: false
+      register: molecule_hostname_f
+
+    - name: Set a fact for the hostname
+      ansible.builtin.set_fact:
+        molecule_hostname: "{{ molecule_hostname_f.stdout }}"
+
     - name: Include /etc/hosts role as root
       ansible.builtin.include_role:
         name: etchosts
@@ -42,7 +52,7 @@
               - localhost
           - ip: "{{ ansible_default_ipv4.address }}"
             hostname:
-              - molecule.test
+              - "{{ molecule_hostname }}"
           - ip: ::1
             hostname:
               - ip6-localhost
