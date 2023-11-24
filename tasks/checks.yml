@@ -44,6 +44,7 @@
       ansible.utils.fact_diff:
         before: "{{ etchosts_existing }}"
         after: "{{ etchosts_file }}"
+      changed_when: false
 
     # TODO Add checks:
     # - Proposed IP addresses are not duplicated
