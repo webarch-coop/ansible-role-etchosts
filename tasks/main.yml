@@ -65,7 +65,11 @@
           ansible.builtin.debug:
             var: etchosts_set_hostname
 
-        - name: Use lineinfile to set the /etc/hostname
+        - name: Fail due to unknown cause of failure
+          ansible.builtin.fail:
+          when: etchosts_set_hostname.msg is not regex('Device or resource busy$')
+
+        - name: Use lineinfile to set the /etc/hostname due to issue found in containers
           ansible.builtin.lineinfile:
             create: true
             line: "{{ etchosts_hostname }}"
@@ -74,6 +78,7 @@
             regex: '^[0-9a-z-]{1,60}[.].*'
             state: present
             unsafe_writes: "{{ etchosts_unsafe_writes }}"
+          when: etchosts_set_hostname.msg is regex('Device or resource busy$')
 
       when: etchosts_hostname | length > 0
 
