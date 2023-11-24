@@ -64,6 +64,7 @@
         path: /etc/mailname
         regex: '^[0-9a-z-]{1,60}[.].*'
         state: present
+        unsafe_writes: "{{ etchosts_unsafe_writes }}"
       when: etchosts_mailname | length > 0
 
   when: etchosts | bool

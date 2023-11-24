@@ -72,5 +72,6 @@
           - ip: ff02::3
             hostname:
               - ip6-allhosts
+        etchosts_hostname_strategy: systemd
         etchosts_unsafe_writes: true
 ...
