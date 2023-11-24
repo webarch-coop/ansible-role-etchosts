@@ -40,5 +40,6 @@ etchosts_hostname: "{{ inventory_hostname }}"
 etchosts_hostname_strategy: "{% if ansible_distribution == 'Debian' %}debian{% else %}systemd{% endif %}"
 etchosts_mailname: "{{ inventory_hostname }}"
 etchosts_template: false
+etchosts_unsafe_writes: false
 etchosts_validate: true
 ...
