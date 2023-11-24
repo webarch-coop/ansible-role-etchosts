@@ -50,10 +50,31 @@
         - etchosts_template is defined
         - etchosts_template | bool
 
-    - name: Hostname set
-      ansible.builtin.hostname:
-        name: "{{ etchosts_hostname }}"
-        use: "{{ etchosts_hostname_strategy }}"
+    - name: Setting the hostname in containers can fail
+      block:
+
+        - name: Hostname set
+          ansible.builtin.hostname:
+            name: "{{ etchosts_hostname }}"
+            use: "{{ etchosts_hostname_strategy }}"
+          register: etchosts_set_hostname
+
+      rescue:
+
+        - name: Debug failure
+          ansible.builtin.debug:
+            var: etchosts_set_hostname
+
+        - name: Use lineinfile to set the /etc/hostname
+          ansible.builtin.lineinfile:
+            create: true
+            line: "{{ etchosts_hostname }}"
+            mode: "0644"
+            path: /etc/hostname
+            regex: '^[0-9a-z-]{1,60}[.].*'
+            state: present
+            unsafe_writes: "{{ etchosts_unsafe_writes }}"
+
       when: etchosts_hostname | length > 0
 
     - name: Mailname set
