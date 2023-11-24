@@ -8,23 +8,24 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects /etc/hosts Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-dependency:
-  name: galaxy
-platforms:
-  - name: instance
-provisioner:
-  name: ansible
-  config_options:
-    defaults:
-      ansible_managed: Ansible managed
-    # host_vars:
-    #   instance:
-    #     ansible_user: ansible
-  options:
-    D: true
-verifier:
-  name: ansible
-    # host_vars:
-    #   instance:
-    #     ansible_user: ansible
+- name: Verify as root
+  # become: true
+  connection: local
+  gather_facts: true
+  hosts:
+    - localhost
+  tasks:
+
+    - name: Slurp /etc/hosts
+      ansible.builtin.slurp:
+        src: /etc/hosts
+      register: molecule_etchosts_file_b64encoded
+
+    - name: Decode the base64 encoded version of the file and set a variable
+      ansible.builtin.set_fact:
+        molecule_etchosts_file_contents: "{{ molecule_etchosts_file_b64encoded['content'] | b64decode | community.general.jc('hosts') }}"
+
+    - name: Debug the existing /etc/hosts file entries
+      ansible.builtin.debug:
+        var: molecule_etchosts_file_contents
 ...

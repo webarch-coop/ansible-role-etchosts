@@ -35,7 +35,7 @@
         etchosts_existing: "{{ etchosts_existing_b64encoded['content'] | b64decode | community.general.jc('hosts') }}"
         etchosts_existing_ips: "{{ etchosts_existing_b64encoded['content'] | b64decode | community.general.jc('hosts') | community.general.json_query('[*].ip') }}"
 
-    - name: Debug the exists /etc/hosts file entries
+    - name: Debug the existing /etc/hosts file entries
       ansible.builtin.debug:
         var: etchosts_existing
         verbosity: "{% if ansible_check_mode | bool %}2{% else %}3{% endif %}"
