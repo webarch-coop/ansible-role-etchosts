@@ -11,4 +11,7 @@
 # https://docs.ansible.com/ansible/latest/playbook_guide/complex_data_manipulation.html
 etchostsvarnames: "{{ q('varnames', '^etchosts_') | sort }}"
 etchostshostvars: "{{ dict(etchostsvarnames | list | zip(q('vars', *etchostsvarnames))) }}"
+
+etchosts_connect_to_bus_error: "Command failed rc=1, out=, err=Failed to connect to bus: No such file or directory"
+etchosts_connect_to_bus_error_regex: "^{{ etchosts_connect_to_bus_error | ansible.builtin.regex_escape }}$"
 ...

@@ -61,15 +61,18 @@
 
       rescue:
 
-        - name: Debug failure
+        - name: Debug failure message
           ansible.builtin.debug:
-            var: etchosts_set_hostname
+            var: etchosts_set_hostname.msg
+          when: etchosts_set_hostname.msg is defined
 
         - name: Fail due to unknown cause of failure
           ansible.builtin.fail:
-          when: etchosts_set_hostname.msg is not regex('Device or resource busy$')
+          when:
+            - etchosts_set_hostname.msg is not ansible.builtin.regex('Device or resource busy$')
+            - etchosts_set_hostname.msg is not ansible.builtin.regex(etchosts_connect_to_bus_error_regex)
 
-        - name: Use lineinfile to set the /etc/hostname due to issue found in containers
+        - name: Use lineinfile to set the /etc/hostname
           ansible.builtin.lineinfile:
             create: true
             line: "{{ etchosts_hostname }}"
@@ -78,7 +81,21 @@
             regex: '^[0-9a-z-]{1,60}[.].*'
             state: present
             unsafe_writes: "{{ etchosts_unsafe_writes }}"
-          when: etchosts_set_hostname.msg is regex('Device or resource busy$')
+          when: >-
+            ( etchosts_set_hostname.msg is ansible.builtin.regex('Device or resource busy$') ) or
+            ( etchosts_set_hostname.msg is ansible.builtin.regex(etchosts_connect_to_bus_error_regex)
+
+        - name: Reboot due to Failed to connect to bus error
+          ansible.builtin.command: reboot -h now
+          changed_when: true
+          when: ( etchosts_set_hostname.msg is ansible.builtin.regex(etchosts_connect_to_bus_error_regex)
+
+        - name: Wait for the server to come up
+          ansible.builtin.wait_for:
+            path: /etc/hostname
+            search_regex: "^{{ etchosts_hostname }}$"
+            delay: 30
+          when: ( etchosts_set_hostname.msg is ansible.builtin.regex(etchosts_connect_to_bus_error_regex)
 
       when: etchosts_hostname | length > 0
 

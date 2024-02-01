@@ -18,6 +18,14 @@ argument_specs:
         type: bool
         required: true
         description: Run the tasks in this role.
+      etchosts_connect_to_bus_error:
+        type: str
+        required: true
+        description: Internal variable for error message.
+      etchosts_connect_to_bus_error_regex:
+        type: str
+        required: true
+        description: Internal variable for regular expression to match error message.
       etchosts_entry:
         type: dict
         required: false
