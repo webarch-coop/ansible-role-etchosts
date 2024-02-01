@@ -13,6 +13,7 @@ The existing content of `/etc/hosts` can be read as YAML using [JC](https://kell
 ```bash
 cat /etc/hosts | jc --hosts -y
 ```
+
 ```yaml
   - ip: 127.0.0.1
     hostname:
@@ -46,6 +47,7 @@ etchosts_file:
       - foo.example.lan
       - foo
 ```
+
 The `ip` address is required, the `hostname` is only required when the `state` is not defined or set to `present`.
 
 ### etchosts_hostname
