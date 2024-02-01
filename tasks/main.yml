@@ -64,6 +64,7 @@
         - name: Debug failure message
           ansible.builtin.debug:
             var: etchosts_set_hostname.msg
+            verbosity: "{% if ansible_check_mode | bool %}0{% else %}1{% endif %}"
           when: etchosts_set_hostname.msg is defined
 
         - name: Fail due to unknown cause of failure
