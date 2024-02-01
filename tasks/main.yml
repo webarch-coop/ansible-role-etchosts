@@ -69,7 +69,7 @@
         - name: Fail due to unknown cause of failure
           ansible.builtin.fail:
           when:
-            - etchosts_set_hostname.msg is not ansible.builtin.regex('Device or resource busy$')
+            - etchosts_set_hostname.msg is not ansible.builtin.regex(etchosts_static_hostname_error_regex)
             - etchosts_set_hostname.msg is not ansible.builtin.regex(etchosts_connect_to_bus_error_regex)
 
         - name: Use lineinfile to set the /etc/hostname
@@ -82,8 +82,8 @@
             state: present
             unsafe_writes: "{{ etchosts_unsafe_writes }}"
           when: >-
-            ( etchosts_set_hostname.msg is ansible.builtin.regex('Device or resource busy$') ) or
-            ( etchosts_set_hostname.msg is ansible.builtin.regex(etchosts_connect_to_bus_error_regex)
+            ( etchosts_set_hostname.msg is ansible.builtin.regex(etchosts_static_hostname_error_regex) ) or
+            ( etchosts_set_hostname.msg is ansible.builtin.regex(etchosts_connect_to_bus_error_regex) )
 
         - name: Reboot due to Failed to connect to bus error
           ansible.builtin.command: reboot -h now

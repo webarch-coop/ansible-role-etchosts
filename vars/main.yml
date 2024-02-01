@@ -14,4 +14,7 @@ etchostshostvars: "{{ dict(etchostsvarnames | list | zip(q('vars', *etchostsvarn
 
 etchosts_connect_to_bus_error: "Command failed rc=1, out=, err=Failed to connect to bus: No such file or directory"
 etchosts_connect_to_bus_error_regex: "^{{ etchosts_connect_to_bus_error | ansible.builtin.regex_escape }}$"
+
+etchosts_static_hostname_error: "Command failed rc=1, out=, err=Could not set static hostname: Failed to set static hostname: Device or resource busy"
+etchosts_static_hostname_error_regex: "^{{ etchosts_static_hostname_error | ansible.builtin.regex_escape }}$"
 ...
