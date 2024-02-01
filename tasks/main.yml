@@ -95,7 +95,7 @@
             path: /etc/hostname
             search_regex: "^{{ etchosts_hostname }}$"
             delay: 30
-          when: ( etchosts_set_hostname.msg is ansible.builtin.regex(etchosts_connect_to_bus_error_regex)
+          when: etchosts_set_hostname.msg is ansible.builtin.regex(etchosts_connect_to_bus_error_regex)
 
       when: etchosts_hostname | length > 0
 
