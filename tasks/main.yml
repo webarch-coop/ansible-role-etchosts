@@ -88,7 +88,7 @@
         - name: Reboot due to Failed to connect to bus error
           ansible.builtin.command: reboot -h now
           changed_when: true
-          when: ( etchosts_set_hostname.msg is ansible.builtin.regex(etchosts_connect_to_bus_error_regex)
+          when: etchosts_set_hostname.msg is ansible.builtin.regex(etchosts_connect_to_bus_error_regex)
 
         - name: Wait for the server to come up
           ansible.builtin.wait_for:
