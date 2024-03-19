@@ -1,4 +1,4 @@
-# Copyright 2023 Chris Croome
+# Copyright 2023-2024 Chris Croome
 #
 # This file is part of the Webarchitects /etc/hosts Ansible role.
 #
@@ -8,6 +8,15 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects /etc/hosts Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
+- name: Skip etc/hosts role
+  ansible.builtin.debug:
+    msg: "The tasks in the etc/hosts role are not being run since the etchosts variable is not true."
+  when: >-
+    ( etchosts is not defined ) or
+    ( not etchosts | bool )
+  tags:
+    - etchosts
+
 - name: Manage /etc/hosts
   block:
 
@@ -111,7 +120,9 @@
         unsafe_writes: "{{ etchosts_unsafe_writes }}"
       when: etchosts_mailname | length > 0
 
-  when: etchosts | bool
+  when:
+    - etchosts is defined
+    - etchosts | bool
   tags:
     - etchosts
 ...
