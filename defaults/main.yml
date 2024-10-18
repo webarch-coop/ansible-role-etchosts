@@ -13,7 +13,7 @@ etchosts_file:
   - ip: 127.0.0.1
     hostname:
       - localhost
-  - ip: "{{ ansible_default_ipv4.address }}"
+  - ip: "{{ ansible_facts.default_ipv4.address }}"
     hostname:
       - "{{ inventory_hostname }}"
       - "{{ inventory_hostname_short }}"
@@ -37,7 +37,7 @@ etchosts_file:
     hostname:
       - ip6-allhosts
 etchosts_hostname: "{{ inventory_hostname }}"
-etchosts_hostname_strategy: "{% if ansible_distribution == 'Debian' %}debian{% else %}systemd{% endif %}"
+etchosts_hostname_strategy: "{% if ansible_facts.distribution == 'Debian' %}debian{% else %}systemd{% endif %}"
 etchosts_mailname: "{{ inventory_hostname }}"
 etchosts_template: false
 etchosts_unsafe_writes: false
