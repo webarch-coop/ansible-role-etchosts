@@ -13,14 +13,12 @@ variables:
   ANSIBLE_DEFAULT_VERBOSITY: "1"
   ANSIBLE_DIFF_ALWAYS: "1"
   ANSIBLE_DISPLAY_SKIPPED_HOSTS: "0"
-  ANSIBLE_ERROR_ON_UNDEFINED_VARS: "1"
   ANSIBLE_FORCE_COLOR: "1"
   ANSIBLE_INJECT_FACT_VARS: "0"
   ANSIBLE_NOCOWS: "1"
   ANSIBLE_REMOTE_TMP: "/tmp"
   ANSIBLE_SHELL_ALLOW_WORLD_READABLE_TEMP: "1"
   DEBIAN_FRONTEND: noninteractive
-  DEFAULT_MANAGED_STR: "Ansible managed"
   MOLECULE_VERBOSITY: "0"
   PY_COLORS: "1"
 before_script:
@@ -37,32 +35,32 @@ before_script:
   - hostname -f
 stages:
   - bookworm
-  - jammy
+  - forky
   - noble
   - trixie
 bookworm:
-  image: registry.git.coop/webarch/containers/images/bookworm:20241008
+  image: registry.git.coop/webarch/containers/images/bookworm:20250922
   stage: bookworm
   script:
     - pre-commit install
     - pre-commit run --all-files
     - molecule test
-jammy:
-  image: registry.git.coop/webarch/containers/images/jammy:20241008
-  stage: jammy
+forky:
+  image: registry.git.coop/webarch/containers/images/forky:20250922
+  stage: forky
   script:
     - pre-commit install
     - pre-commit run --all-files
     - molecule test
 noble:
-  image: registry.git.coop/webarch/containers/images/noble:20241008
+  image: registry.git.coop/webarch/containers/images/noble:20250922
   stage: noble
   script:
     - pre-commit install
     - pre-commit run --all-files
     - molecule test
 trixie:
-  image: registry.git.coop/webarch/containers/images/trixie:20241008
+  image: registry.git.coop/webarch/containers/images/trixie:20250922
   stage: trixie
   script:
     - pre-commit install
