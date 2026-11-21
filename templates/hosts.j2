@@ -1,6 +1,7 @@
-{# j2lint: disable=single-statement-per-line #}{% for etchosts_entry in etchosts_file %}
-{% if etchosts_entry.state is not defined or etchosts_entry.state == "present" %}
-{{ etchosts_entry.ip }}{% for etchosts_name in etchosts_entry.hostname %} {{ etchosts_name }}{% endfor %}
+{# j2lint: disable=single-statement-per-line #}
+{% for etchosts_entry in etchosts_file %}
+{%     if etchosts_entry.state is not defined or etchosts_entry.state == "present" %}
+{{ etchosts_entry.ip }}{{ etchosts_entry.hostname | ansible.builtin.join(' ') }}
 
-{% endif %}
+{%     endif %}
 {% endfor %}
