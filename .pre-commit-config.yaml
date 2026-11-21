@@ -36,6 +36,7 @@ repos:
       - id: ansible-lint
         name: Ansible Lint
         language: python
+        language_version: python3
         additional_dependencies:
           # https://github.com/kellyjonbrazil/jc/releases
           - jc==1.26.2
